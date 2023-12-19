@@ -14,7 +14,7 @@ services:
     container_name: "nodejs"
     image: node:20-bullseye
     ports:
-      - "3000:3000"
+      - "3520:3520"
     volumes:
       - "./src/node:/app"
       - "./work:/work"

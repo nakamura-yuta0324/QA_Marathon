@@ -1,22 +1,95 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件情報入力</title>
-    <!-- Bootstrap CSSの読み込み -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Customer Details</title>
+  <!-- Bootstrap CSSの読み込み -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
+
 <body>
-    <div class="container mt-5">
-        <!-- ここにHTMLを書く -->
-    </div>
-    <script type="module">
-        <!-- ここにJSを書く -->
-    </script>
-    <!-- BootstrapのJavaScriptの読み込み -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <div class="container mt-5">
+    <h1 class="mb-4">Edit Customer Details</h1>
+    <form id="update-form">
+      <!-- 顧客の編集フォーム -->
+      <div class="form-group">
+        <label for="company-name">Company Name</label>
+        <input type="text" class="form-control" id="company-name" name="companyName">
+      </div>
+      <div class="form-group">
+        <label for="industry">Industry</label>
+        <input type="text" class="form-control" id="industry" name="industry">
+      </div>
+      <div class="form-group">
+        <label for="contact">Contact</label>
+        <input type="text" class="form-control" id="contact" name="contact">
+      </div>
+      <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" class="form-control" id="location" name="location">
+      </div>
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a href="detail.html?id=<%=customerId %>" class="btn btn-secondary ml-2">Cancel</a>
+    </form>
+  </div>
+
+  <script type="module">
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get('id');
+
+    // ExpressサーバのAPIエンドポイントのURL
+    import config from "../../config.js";
+    const apiUrl = "http://localhost:3520";
+
+    // 顧客情報を取得してフォームに反映
+    fetch(`${apiUrl}/customers/${customerId}`)
+      .then((response) => response.json())
+      .then(customer => {
+        document.getElementById("company-name").value = customer.company_name;
+        document.getElementById("industry").value = customer.industry;
+        document.getElementById("contact").value = customer.contact;
+        document.getElementById("location").value = customer.location;
+      })
+      .catch((error) => console.error(error));
+
+    // 顧客情報を更新する関数
+    const updateCustomer = (formData) => {
+      fetch(`${apiUrl}/customers/${customerId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(updatedCustomer => {
+          // 更新が成功したらdetail.htmlにリダイレクト
+          alert('顧客情報の変更が完了しました。');
+          window.location.href =`detail.html?id=${customerId}`;
+        })
+        .catch(error => console.error('There was a problem with the fetch operation:', error));
+    };
+
+    // フォームの送信イベントを処理
+    document.getElementById('update-form').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData.entries());
+      updateCustomer(data);
+    });
+  </script>
+
+  <!-- BootstrapのJavaScriptと依存関係のリンク -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

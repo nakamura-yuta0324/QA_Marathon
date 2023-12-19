@@ -1,22 +1,100 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>案件情報入力</title>
+    <title>案件情報入力確認</title>
     <!-- Bootstrap CSSの読み込み -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
+
 <body>
     <div class="container mt-5">
         <!-- ここにHTMLを書く -->
+        <h1>下記の内容で登録してもよろしいですか？</h1>
+
+        <div id="displayContent">
+            <!-- 入力内容を表示する領域 -->
+        </div>
+
+        <button id="register">はい</button> <!-- 登録ボタン -->
+        <button id="goBack">いいえ</button> <!-- 戻るボタン -->
     </div>
     <script type="module">
-        <!-- ここにJSを書く -->
+        // JavaScriptで入力内容を表示する関数
+        function displayInput() {
+            // URLパラメータから値を取得して表示
+            const params = new URLSearchParams(window.location.search);
+            const companyName = params.get('companyName');
+            const industry = params.get('industry');
+            const contact = params.get('contact');
+            const location = params.get('location');
+
+            // 入力内容を表示するための要素を取得
+            const displayArea = document.getElementById('displayContent');
+
+            // 入力内容を表示するHTMLを生成して要素に追加
+            displayArea.innerHTML = `
+                <p>会社名: ${companyName}</p>
+                <p>業種: ${industry}</p>
+                <p>連絡先: ${contact}</p>
+                <p>所在地: ${location}</p>
+                <!-- 追加の入力内容に合わせて表示を拡張 -->
+            `;
+        }
+
+        // 登録ボタンが押された際の処理
+        document.getElementById('register').addEventListener('click', function () {
+            const params = new URLSearchParams(window.location.search);
+            const companyName = params.get('companyName');
+            const industry = params.get('industry');
+            const contact = params.get('contact');
+            const location = params.get('location');
+
+            const requestData = {
+                companyName: companyName,
+                industry: industry,
+                contact: contact,
+                location: location
+            };
+
+            fetch('http://localhost:3520/add-customer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // 登録が成功した場合の処理
+                        alert('登録が完了しました。');
+                        window.location.href = 'list.html';
+
+
+                    } else {
+                        throw new Error('リクエストエラー');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('登録に失敗しました。');
+                });
+        });
+
+        // 戻るボタンが押された際の処理
+        document.getElementById('goBack').addEventListener('click', function () {
+            window.history.back();
+        });
+
+        // ページ読み込み時に入力内容を表示する
+        window.onload = displayInput;
     </script>
     <!-- BootstrapのJavaScriptの読み込み -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
+
 </html>
