@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Details</title>
+  <!-- Bootstrap CSSの読み込み -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Customer Details</h1>
+    <div id="customer-details">
+      <!-- 顧客の詳細情報はここに表示されます -->
+      <p><strong>Customer ID:</strong> <span id="customer-id"></span></p>
+      <p><strong>Company Name:</strong> <span id="company-name"></span></p>
+      <p><strong>Industry:</strong> <span id="industry"></span></p>
+      <p><strong>Contact:</strong> <span id="contact"></span></p>
+      <p><strong>Location:</strong> <span id="location"></span></p>
+      <p><strong>Created Date:</strong> <span id="created-date"></span></p>
+      <p><strong>Updated Date:</strong> <span id="updated-date"></span></p>
+      <button id="delete-btn" class="btn btn-danger">顧客情報を削除する</button><br>
+      <button id="edit-btn" class="btn btn-primary">編集する</button><br>
+      <a href="list.html">顧客一覧画面へ</a>
+    </div>
+  </div>
+
+  <script type="module">
+    const urlParams = new URLSearchParams(window.location.search);
+    const customerId = urlParams.get('id');
+
+    // ExpressサーバのAPIエンドポイントのURL
+    import config from "../../config.js";
+    const apiUrl = "http://localhost:3520";
+
+    // 顧客情報を削除する関数
+    const deleteCustomer = () => {
+      if (confirm("顧客情報を削除してもよろしいですか？")) {
+        fetch(`${apiUrl}/customers/${customerId}`, {
+          method: 'DELETE' // DELETEリクエストを行う
+        })
+          .then(response => {
+            if (!response.ok) {
+              alert("通信エラーです。");
+              throw new Error('Network response was not ok');
+            } else {
+              alert("顧客情報が削除されました。");
+              // 削除後に一覧画面にリダイレクトするなどの処理を追加できます。
+              window.location.href = 'list.html'; // list.htmlにリダイレクト
+            }
+
+          })
+          .catch(error => console.error('There was a problem with the fetch operation:', error));
+      }
+    };
+
+    // 削除ボタンにイベントリスナーを追加
+    document.getElementById('delete-btn').addEventListener('click', deleteCustomer);
+
+    fetch(`${apiUrl}/customers/${customerId}`)
+      .then((response) => response.json())
+      .then(customer => {
+        document.getElementById("customer-id").textContent = customer.customer_id;
+        document.getElementById("company-name").textContent = customer.company_name;
+        document.getElementById("industry").textContent = customer.industry;
+        document.getElementById("contact").textContent = customer.contact;
+        document.getElementById("location").textContent = customer.location;
+        document.getElementById("created-date").textContent = customer.created_date;
+        document.getElementById("updated-date").textContent = customer.updated_date;
+
+        // ローカルストレージから更新された顧客情報を取得する
+        const updatedCustomer = JSON.parse(localStorage.getItem('updatedCustomer'));
+        if (updatedCustomer && updatedCustomer.customer_id === customer.customer_id) {
+          // localStorageに更新された顧客情報があれば、それを表示する
+          document.getElementById("company-name").textContent = updatedCustomer.company_name;
+          document.getElementById("industry").textContent = updatedCustomer.industry;
+          document.getElementById("contact").textContent = updatedCustomer.contact;
+          document.getElementById("location").textContent = updatedCustomer.location;
+          document.getElementById("updated-date").textContent = updatedCustomer.updated_date;
+
+          // ローカルストレージから情報を削除する（次回の更新に備えて）
+          localStorage.removeItem('updatedCustomer');
+        }
+      })
+      .catch((error) => console.error(error));
+
+    // Editボタンがクリックされたときの処理を追加
+    document.getElementById('edit-btn').addEventListener('click', () => {
+      window.location.href = `update.html?id=${customerId}`; // update.htmlに遷移
+    });
+  </script>
+
+  <!-- BootstrapのJavaScriptと依存関係のリンク -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

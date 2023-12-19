@@ -1,57 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Customer List</title>
-    <!-- Bootstrap CSSの読み込み -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  </head>
-  <body>
-    <div class="container mt-5">
-      <h1 class="mb-4">Customer List</h1>
-      <table class="table table-striped">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Company Name</th>
-            <th scope="col">Contact</th>
-          </tr>
-        </thead>
-        <tbody id="customer-list">
-          <!-- 顧客データはここに挿入されます -->
-        </tbody>
-      </table>
-    </div>
 
-    <script type="module">
-      // ExpressサーバのAPIエンドポイントのURL
-      import config from "./config.js";
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customer List</title>
+  <!-- Bootstrap CSSの読み込み -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
 
-      fetch(`${config.apiUrl}/customers`)
-        .then((response) => {
-          console.log(response); // ここでレスポンスオブジェクトをログに出力
-          return response.json();
-        })
-        .then((data) => {
-          console.log(data); // ここで解析されたデータをログに出力
-          const list = document.getElementById("customer-list");
-          data.forEach((customer, index) => {
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">Customer List</h1>
+    <a href="index.html">ホーム画面へ</a>
+    <table class="table table-striped">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Company Name</th>
+          <th scope="col">Contact</th>
+        </tr>
+      </thead>
+      <tbody id="customer-list">
+        <!-- 顧客データはここに挿入されます -->
+      </tbody>
+    </table>
+  </div>
+
+  <script type="module">
+    // ExpressサーバのAPIエンドポイントのURL
+    import config from "../../config.js";
+    const apiUrl = "http://localhost:3520"
+    fetch(`${apiUrl}/customers`)
+      .then((response) => {
+        console.log(response); // ここでレスポンスオブジェクトをログに出力
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data); // ここで解析されたデータをログに出力
+        const list = document.getElementById("customer-list");
+        data.forEach((customer, index) => {
+          if (!customer.deleted) { // deletedフラグが存在しないか、falseの場合のみ表示
             const row = list.insertRow();
             const cell1 = row.insertCell(0);
             const cell2 = row.insertCell(1);
             const cell3 = row.insertCell(2);
             cell1.textContent = index + 1;
-            cell2.textContent = customer.companyname;
+            cell2.innerHTML = `<a href="detail.html?id=${customer.customer_id}">${customer.company_name}</a>`;
             cell3.textContent = customer.contact;
+          }
           });
-        })
-        .catch((error) => console.error(error));
-    </script>
+      })
+      .catch((error) => console.error(error));
+  </script>
 
-    <!-- BootstrapのJavaScriptと依存関係のリンク -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </body>
+  <!-- BootstrapのJavaScriptと依存関係のリンク -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
 </html>
