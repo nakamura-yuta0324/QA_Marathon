@@ -1,5 +1,5 @@
 const config = {
-  apiUrl: 'http://localhost:3520'
+  apiUrl: '/api_yuta_nakamura_fx'
 };
 
 export default config;
