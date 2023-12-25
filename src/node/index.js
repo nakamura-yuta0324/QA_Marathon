@@ -11,7 +11,7 @@ const { Pool } = require("pg");
 const pool = new Pool({
   user: "user_yuta_nakamura_fx", // PostgreSQLのユーザー名に置き換えてください
   host: "localhost",
-  database: "yuta_nakamura_fx", // PostgreSQLのデータベース名に置き換えてください
+  database: "db_yuta_nakamura_fx", // PostgreSQLのデータベース名に置き換えてください
   password: "pass", // PostgreSQLのパスワードに置き換えてください
   port: 5432,
 });
