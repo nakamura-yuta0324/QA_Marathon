@@ -32,8 +32,8 @@
     const customerId = urlParams.get('id');
 
     // ExpressサーバのAPIエンドポイントのURL
-    import config from "../../config.js";
-    const apiUrl = "http://localhost:3520";
+    import config from "../config.js";
+    const apiUrl = config.apiUrl
 
     // 顧客情報を削除する関数
     const deleteCustomer = () => {
