@@ -15,7 +15,6 @@ jobs:
           SSH_USER: ${{ secrets.DEV_SSH_USER }}
           SSH_KEY: ${{ secrets.DEV_SSHE_SSH_KEY }}
       - run: ssh ${{ steps.ssh_staging.outputs.SERVER }} bash /app/deploy.sh yuta_nakamura_fx
-        name: Run Staging Deployment
 
   test_production:
     needs: test_staging
@@ -30,4 +29,3 @@ jobs:
           SSH_USER: ${{ secrets.DEV_SSH_USER }}
           SSH_KEY: ${{ secrets.PRO_DEV_SSHE_SSH_KEY }}
       - run: ssh ${{ steps.ssh_production.outputs.SERVER }} bash /app/deploy.sh yuta_nakamura_fx
-        name: Run Production Deployment
