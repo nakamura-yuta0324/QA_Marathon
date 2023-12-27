@@ -40,9 +40,8 @@
     const customerId = urlParams.get('id');
 
     // ExpressサーバのAPIエンドポイントのURL
-    import config from "../../config.js";
-    const apiUrl = "http://localhost:3520";
-
+    import config from "../config.js";
+    const apiUrl = config.apiUrl
     // 顧客情報を取得してフォームに反映
     fetch(`${apiUrl}/customers/${customerId}`)
       .then((response) => response.json())
